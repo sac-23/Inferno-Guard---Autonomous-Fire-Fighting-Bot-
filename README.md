@@ -12,18 +12,6 @@ InfernoGuard is an ESP32-based autonomous firefighting robot designed to detect 
 -  Servo-based sweeping water sprayer
 -  Autonomous decision-making via FreeRTOS tasks
 
-##  Hardware Used
-
-- ESP32 Dev Board
-- DHT11 Sensor
-- MQ-2 Gas Sensor
-- 3 x IR Flame Sensors
-- L298N Motor Driver
-- 4 x Motors (2 Left + 2 Right)
-- Water Pump
-- Servo Motor
-- 12V Battery
-
 ##  Cloud Integration
 
 - **ThingSpeak**: Real-time dashboard for temperature, humidity, and smoke levels
@@ -36,9 +24,27 @@ InfernoGuard is an ESP32-based autonomous firefighting robot designed to detect 
 - SensorReadingTask: Reads from DHT11 and MQ2
 - ThingSpeakOperationTask: Uploads to ThingSpeak
 
+##  Why FreeRTOS? (Special Mention)
+
+In real-time systems, operations like cloud data logging and alert message transmission can introduce **delays due to WiFi or HTTP request latency**. During these moments, if a fire is detected, the robot must **not wait** — it must respond immediately.
+
+To solve this, I utilized the **dual-core capability of the ESP32** using **FreeRTOS**:
+
+-  **Core 1 handles MainOperationTask**: flame detection, robot motion, and fire extinguishing.
+-  **Core 0 handles Secondary Tasks**: cloud updates and alert messages.
+
+This ensures:
+
+- **No blocking**
+- **True parallel execution**
+- **Immediate firefighting even during background operations**
+With FreeRTOS, InfernoGuard becomes a **real-time multi-tasking robot**, making it both **smart and fast** under critical conditions.
+
 ##  Future Improvements
 
 - Integrate camera + AI for visual flame recognition
 - Add GPS to log fire location
 - Add LoRa/mesh for remote areas
 - Use water-level sensor to alert low reservoir
+
+---
